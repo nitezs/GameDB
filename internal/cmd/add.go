@@ -14,10 +14,9 @@ import (
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add",
-	Long:  "Manually add game info",
-	Short: "Manually add game info",
-	Run:   addRun,
+	Use:  "add",
+	Long: "Allow you to manually add information for games that cannot match IDs from IGDB, Steam or GOG",
+	Run:  addRun,
 }
 
 type AddCommandConfig struct {
@@ -30,10 +29,10 @@ type AddCommandConfig struct {
 var addCmdCfg AddCommandConfig
 
 func init() {
-	addCmd.Flags().StringVarP(&addCmdCfg.GameID, "game", "g", "", "game id")
+	addCmd.Flags().StringVarP(&addCmdCfg.GameID, "id", "i", "", "repack game id")
 	addCmd.Flags().StringVarP(&addCmdCfg.IDtype, "type", "t", "", "id type")
+	addCmd.Flags().IntVarP(&addCmdCfg.ID, "platform-id", "p", 0, "platform id")
 	addCmd.Flags().StringVarP(&addCmdCfg.Config, "config", "c", "", "config path")
-	addCmd.Flags().IntVarP(&addCmdCfg.ID, "id", "i", 0, "platform id")
 	RootCmd.AddCommand(addCmd)
 }
 

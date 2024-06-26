@@ -7,10 +7,9 @@ import (
 )
 
 var serverCmd = &cobra.Command{
-	Use:   "server",
-	Long:  "Start server",
-	Short: "Start server",
-	Run:   ServerRun,
+	Use:  "server",
+	Long: "Start api server",
+	Run:  ServerRun,
 }
 
 type serverCommandConfig struct {

@@ -71,59 +71,6 @@ func GetSteamIDFromSearchPage(name string) (int, error) {
 	return 0, errors.New("Steam ID not found")
 }
 
-func GetSteamIDFromSteamDB(name string) (int, error) {
-	log.Logger.Debug("Get Steam ID", zap.String("key", name))
-	baseURL, _ := url.Parse(constant.GoogleSearchURL)
-	params := url.Values{}
-	params.Add("q", fmt.Sprintf("%s site:steamdb.info/app", name))
-	baseURL.RawQuery = params.Encode()
-	log.Logger.Debug("Get Steam ID", zap.String("url", baseURL.String()))
-	// dataStr, err := utils.FlareSolverr(baseURL.String())
-	urls, err := utils.BingSearch(fmt.Sprintf("%s site:steamdb.info/app", name))
-	dataStr := strings.Join(urls, "\n")
-	if err != nil {
-		log.Logger.Error("Failed to fetch", zap.String("url", baseURL.String()), zap.Error(err))
-		return 0, err
-	}
-	urlRegex := regexp.MustCompile(`(?i)https://steamdb.info/app/(\d*)`)
-	urlRegexRes := urlRegex.FindAllStringSubmatch(dataStr, -1)
-	if len(urlRegexRes) == 0 {
-		log.Logger.Warn("Steam ID not found", zap.String("key", name))
-		return 0, errors.New("Steam ID not found")
-	}
-	maxSim := 0.0
-	maxSimID := 0
-	ids := []int{}
-	for _, url := range urlRegexRes {
-		idStr := url[1]
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			log.Logger.Warn("Failed to convert Steam ID", zap.String("key", name), zap.String("id", idStr), zap.Error(err))
-			continue
-		}
-		ids = append(ids, id)
-	}
-	ids = utils.Unique(ids)
-	details, err := GetSteamAppDetailsCache(ids)
-	if err != nil {
-		return 0, err
-	}
-	for id, detail := range details {
-		sim := utils.Similarity(detail.Data.Name, name)
-		log.Logger.Debug("Similarity", zap.String("str1", name), zap.String("str2", detail.Data.Name), zap.Float64("similarity", sim))
-		if sim >= 0.9 && sim > maxSim {
-			maxSim = sim
-			maxSimID, _ = strconv.Atoi(id)
-		}
-	}
-	if maxSimID != 0 {
-		log.Logger.Info("Steam ID found", zap.String("key", name), zap.String("id", strconv.Itoa(maxSimID)))
-		return maxSimID, nil
-	}
-	log.Logger.Warn("Steam ID not found", zap.String("key", name))
-	return 0, errors.New("Steam ID not found")
-}
-
 func GetIDPrepared(key string) string {
 	key = regexp.MustCompile(`(?i)\b(\w+)\s+(Edition|Vision|Collection)\b`).ReplaceAllString(key, " ")
 	key = regexp.MustCompile(`(?i)GOTY`).ReplaceAllString(key, "Game of the year")
@@ -140,10 +87,6 @@ func _GetSteamID(name string, prepare bool) (int, error) {
 	if err == nil {
 		return int(id), nil
 	}
-	// id, err = GetSteamIDFromSteamDB(key)
-	// if err == nil {
-	// 	return int(id), nil
-	// }
 	return 0, errors.New("Steam ID not found")
 }
 

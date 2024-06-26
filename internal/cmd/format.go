@@ -11,26 +11,25 @@ import (
 )
 
 var formatCmd = &cobra.Command{
-	Use:   "format",
-	Long:  "Format games name",
-	Short: "Format games name",
-	Run:   FixRun,
+	Use:  "format",
+	Long: "Format games name by formatter",
+	Run:  formatRun,
 }
 
 type FormatCommandConfig struct {
-	source string
+	Source string
 }
 
 var formatCmdCfg FormatCommandConfig
 
 func init() {
-	formatCmd.Flags().StringVarP(&formatCmdCfg.source, "source", "s", "", "source to fix (fitgirl/dodi/kaoskrew/freegog/xatab/onlinefix)")
+	formatCmd.Flags().StringVarP(&formatCmdCfg.Source, "source", "s", "", "source to fix (fitgirl/dodi/kaoskrew/freegog/xatab/onlinefix)")
 	RootCmd.AddCommand(formatCmd)
 }
 
-func FixRun(cmd *cobra.Command, args []string) {
-	formatCmdCfg.source = strings.ToLower(formatCmdCfg.source)
-	switch formatCmdCfg.source {
+func formatRun(cmd *cobra.Command, args []string) {
+	formatCmdCfg.Source = strings.ToLower(formatCmdCfg.Source)
+	switch formatCmdCfg.Source {
 	case "fitgirl":
 		items, err := db.GetFitgirlAllGameDownloads()
 		if err != nil {

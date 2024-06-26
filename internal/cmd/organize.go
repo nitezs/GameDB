@@ -10,25 +10,24 @@ import (
 )
 
 var organizeCmd = &cobra.Command{
-	Use:   "organize",
-	Long:  "Organize game info",
-	Short: "Organize game info",
-	Run:   organizeRun,
+	Use:  "organize",
+	Long: "Organize game info by repack game's name",
+	Run:  organizeRun,
 }
 
 type organizeCommandConfig struct {
-	num int
+	Num int
 }
 
 var organizeCmdCfg organizeCommandConfig
 
 func init() {
-	organizeCmd.Flags().IntVarP(&organizeCmdCfg.num, "num", "n", 1, "number of items to process")
+	organizeCmd.Flags().IntVarP(&organizeCmdCfg.Num, "num", "n", 1, "number of items to process")
 	RootCmd.AddCommand(organizeCmd)
 }
 
 func organizeRun(cmd *cobra.Command, args []string) {
-	games, err := db.GetGameDownloadsNotInGameInfos(organizeCmdCfg.num)
+	games, err := db.GetGameDownloadsNotInGameInfos(organizeCmdCfg.Num)
 	if err != nil {
 		log.Logger.Error("Failed to get games", zap.Error(err))
 	}

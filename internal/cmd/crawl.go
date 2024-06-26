@@ -14,41 +14,40 @@ import (
 )
 
 var crawlCmd = &cobra.Command{
-	Use:   "crawl",
-	Long:  "Crawl data",
-	Short: "Crawl data",
-	Run:   crawlRun,
+	Use:  "crawl",
+	Long: "Allow you to crawl games from specific platforms",
+	Run:  crawlRun,
 }
 
 type CrawlCommandConfig struct {
-	source string
-	page   string
-	all    bool
-	num    int
+	Source string
+	Page   string
+	All    bool
+	Num    int
 }
 
 var crawlCmdCfg CrawlCommandConfig
 
 func init() {
-	crawlCmd.Flags().StringVarP(&crawlCmdCfg.source, "source", "s", "", "source to crawl (fitgirl/dodi/kaoskrew/freegog/xatab/onlinefix)")
-	crawlCmd.Flags().StringVarP(&crawlCmdCfg.page, "pages", "p", "1", "pages to crawl (1,2,3 or 1-3), only available for fitgirl/dodi/kaoskrew/xatab/onlinefix")
-	crawlCmd.Flags().BoolVarP(&crawlCmdCfg.all, "all", "a", false, "crawl all page, ignore pages")
-	crawlCmd.Flags().IntVarP(&crawlCmdCfg.num, "num", "n", 1, "number of items to crawl, only available for freegog")
+	crawlCmd.Flags().StringVarP(&crawlCmdCfg.Source, "source", "s", "", "source to crawl (fitgirl/dodi/kaoskrew/freegog/xatab/onlinefix)")
+	crawlCmd.Flags().StringVarP(&crawlCmdCfg.Page, "pages", "p", "1", "pages to crawl (1,2,3 or 1-3), only available for fitgirl/dodi/kaoskrew/xatab/onlinefix")
+	crawlCmd.Flags().BoolVarP(&crawlCmdCfg.All, "all", "a", false, "crawl all page, ignore pages")
+	crawlCmd.Flags().IntVarP(&crawlCmdCfg.Num, "num", "n", 1, "number of items to crawl, only available for freegog")
 	RootCmd.AddCommand(crawlCmd)
 }
 
 func crawlRun(cmd *cobra.Command, args []string) {
-	crawlCmdCfg.source = strings.ToLower(crawlCmdCfg.source)
-	if slices.Contains([]string{"fitgirl", "dodi", "kaoskrew"}, crawlCmdCfg.source) {
+	crawlCmdCfg.Source = strings.ToLower(crawlCmdCfg.Source)
+	if slices.Contains([]string{"fitgirl", "dodi", "kaoskrew"}, crawlCmdCfg.Source) {
 		crawl1337x()
-	} else if crawlCmdCfg.source == "freegog" {
+	} else if crawlCmdCfg.Source == "freegog" {
 		crawlFreeGOG()
-	} else if crawlCmdCfg.source == "xatab" {
+	} else if crawlCmdCfg.Source == "xatab" {
 		crawlXatab()
-	} else if crawlCmdCfg.source == "onlinefix" {
+	} else if crawlCmdCfg.Source == "onlinefix" {
 		crwalOnlineFix()
 	} else {
-		log.Logger.Error("Invalid source", zap.String("source", crawlCmdCfg.source))
+		log.Logger.Error("Invalid source", zap.String("source", crawlCmdCfg.Source))
 	}
 }
 
@@ -87,7 +86,7 @@ func pagination(pageStr string) ([]int, error) {
 func crawl1337x() {
 	var crawl1337xMulti func(pages []int) ([]*model.GameDownload, error)
 	var crawl1337xAll func() ([]*model.GameDownload, error)
-	switch crawlCmdCfg.source {
+	switch crawlCmdCfg.Source {
 	case "fitgirl":
 		crawl1337xMulti = crawler.CrawlFitgirlMulti
 		crawl1337xAll = crawler.CrawlFitgirlAll
@@ -99,15 +98,15 @@ func crawl1337x() {
 		crawl1337xAll = crawler.CrawlKaOsKrewAll
 	}
 
-	if crawlCmdCfg.all {
+	if crawlCmdCfg.All {
 		_, err := crawl1337xAll()
 		if err != nil {
 			return
 		}
 	} else {
-		pages, err := pagination(crawlCmdCfg.page)
+		pages, err := pagination(crawlCmdCfg.Page)
 		if err != nil {
-			log.Logger.Error("Invalid page", zap.String("page", crawlCmdCfg.page))
+			log.Logger.Error("Invalid page", zap.String("page", crawlCmdCfg.Page))
 			return
 		}
 		_, err = crawl1337xMulti(pages)
@@ -118,15 +117,15 @@ func crawl1337x() {
 }
 
 func crawlFreeGOG() {
-	if crawlCmdCfg.num <= 0 {
-		log.Logger.Error("Invalid num", zap.Int("num", crawlCmdCfg.num))
+	if crawlCmdCfg.Num <= 0 {
+		log.Logger.Error("Invalid num", zap.Int("num", crawlCmdCfg.Num))
 		return
 	}
 	var err error
-	if crawlCmdCfg.all {
+	if crawlCmdCfg.All {
 		_, err = crawler.CrawlFreeGOGAll()
 	} else {
-		_, err = crawler.CrawlFreeGOG(crawlCmdCfg.num)
+		_, err = crawler.CrawlFreeGOG(crawlCmdCfg.Num)
 	}
 	if err != nil {
 		return
@@ -134,15 +133,15 @@ func crawlFreeGOG() {
 }
 
 func crawlXatab() {
-	if crawlCmdCfg.all {
+	if crawlCmdCfg.All {
 		_, err := crawler.CrawlXatabAll()
 		if err != nil {
 			return
 		}
 	} else {
-		pages, err := pagination(crawlCmdCfg.page)
+		pages, err := pagination(crawlCmdCfg.Page)
 		if err != nil {
-			log.Logger.Error("Invalid page", zap.String("page", crawlCmdCfg.page))
+			log.Logger.Error("Invalid page", zap.String("page", crawlCmdCfg.Page))
 			return
 		}
 		_, err = crawler.CrawlXatabMulti(pages)
@@ -153,15 +152,15 @@ func crawlXatab() {
 }
 
 func crwalOnlineFix() {
-	if crawlCmdCfg.all {
+	if crawlCmdCfg.All {
 		_, err := crawler.CrawlOnlineFixAll()
 		if err != nil {
 			return
 		}
 	} else {
-		pages, err := pagination(crawlCmdCfg.page)
+		pages, err := pagination(crawlCmdCfg.Page)
 		if err != nil {
-			log.Logger.Error("Invalid page", zap.String("page", crawlCmdCfg.page))
+			log.Logger.Error("Invalid page", zap.String("page", crawlCmdCfg.Page))
 			return
 		}
 		_, err = crawler.CrawlOnlineFixMulti(pages)

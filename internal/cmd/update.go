@@ -11,29 +11,28 @@ import (
 )
 
 var updateCmd = &cobra.Command{
-	Use:   "update",
-	Long:  "Update Game Info",
-	Short: "Update Game Info",
-	Run:   updateRun,
+	Use:  "update",
+	Long: "Update data through regenerated game info",
+	Run:  updateRun,
 }
 
 type updateCommandConfig struct {
-	id         int
-	idtype     string
-	gameInfoID string
+	ID         int
+	IDType     string
+	GameInfoID string
 }
 
 var updateCmdcfx updateCommandConfig
 
 func init() {
-	updateCmd.Flags().IntVarP(&updateCmdcfx.id, "id", "i", 0, "platform id")
-	updateCmd.Flags().StringVarP(&updateCmdcfx.idtype, "type", "t", "", "id type")
-	updateCmd.Flags().StringVarP(&updateCmdcfx.gameInfoID, "info", "g", "", "game info id")
+	updateCmd.Flags().IntVarP(&updateCmdcfx.ID, "platform-id", "p", 0, "platform id")
+	updateCmd.Flags().StringVarP(&updateCmdcfx.IDType, "type", "t", "", "id type")
+	updateCmd.Flags().StringVarP(&updateCmdcfx.GameInfoID, "id", "i", "", "game info id")
 	RootCmd.AddCommand(updateCmd)
 }
 
 func updateRun(cmd *cobra.Command, args []string) {
-	id, err := primitive.ObjectIDFromHex(updateCmdcfx.gameInfoID)
+	id, err := primitive.ObjectIDFromHex(updateCmdcfx.GameInfoID)
 	if err != nil {
 		log.Logger.Error("Failed to parse game info id", zap.Error(err))
 		return
@@ -43,7 +42,7 @@ func updateRun(cmd *cobra.Command, args []string) {
 		log.Logger.Error("Failed to get game info", zap.Error(err))
 		return
 	}
-	newInfo, err := crawler.GenerateGameInfo(updateCmdcfx.idtype, updateCmdcfx.id)
+	newInfo, err := crawler.GenerateGameInfo(updateCmdcfx.IDType, updateCmdcfx.ID)
 	if err != nil {
 		log.Logger.Error("Failed to generate game info", zap.Error(err))
 		return

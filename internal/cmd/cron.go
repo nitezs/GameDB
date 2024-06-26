@@ -10,9 +10,8 @@ import (
 )
 
 var cronCmd = &cobra.Command{
-	Use:   "cron",
-	Long:  "Execute scheduled tasks",
-	Short: "Execute scheduled tasks",
+	Use:  "cron",
+	Long: "Execute scheduled tasks to crawl games",
 	Run: func(cmd *cobra.Command, args []string) {
 		task.Crawl()
 		c := cron.New()

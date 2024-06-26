@@ -9,25 +9,24 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Long:  "list",
-	Short: "list",
-	Run:   listRun,
+	Use:  "list",
+	Long: "List game infos by filter",
+	Run:  listRun,
 }
 
 type listCommandConfig struct {
-	unid bool
+	Unid bool
 }
 
 var listCmdCfg listCommandConfig
 
 func init() {
-	listCmd.Flags().BoolVarP(&listCmdCfg.unid, "unid", "u", false, "unid")
+	listCmd.Flags().BoolVarP(&listCmdCfg.Unid, "unid", "u", false, "unid")
 	RootCmd.AddCommand(listCmd)
 }
 
 func listRun(cmd *cobra.Command, args []string) {
-	if listCmdCfg.unid {
+	if listCmdCfg.Unid {
 		games, err := db.GetGameDownloadsNotInGameInfos(-1)
 		if err != nil {
 			log.Logger.Error("Failed to get games", zap.Error(err))

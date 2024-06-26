@@ -9,9 +9,8 @@ import (
 )
 
 var deduplicateCmd = &cobra.Command{
-	Use:   "deduplicate",
-	Long:  "Deduplicate",
-	Short: "Deduplicate",
+	Use:  "deduplicate",
+	Long: "Remove duplicate games caused by incorrect crawling",
 	Run: func(cmd *cobra.Command, args []string) {
 		err := db.DeduplicateGames()
 		if err != nil {
