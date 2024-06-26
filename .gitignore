@@ -1,0 +1,7 @@
+dist
+.idea
+logs
+config.json
+solution.json
+*test.go
+.vscode
