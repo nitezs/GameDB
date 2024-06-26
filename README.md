@@ -38,7 +38,7 @@ GameDB provides a variety of commands to manage game data. Below are some exampl
     ```
     This command will start the RESTful API server at the specified address.
 
-Read internal/cmd for more details.
+Read `internal/cmd` for more details.
 
 ## Configuration
 
@@ -48,7 +48,7 @@ Edit the `config.json` file to set up your environment:
 - **Redis**: Optionally configure Redis for caching.
 - **Other Settings**: Adjust other settings as needed for your deployment.
 
-Read internal/config/config.go for more details.
+Read `internal/config/config.go` for more details.
 
 ## Example Workflow
 
@@ -62,12 +62,12 @@ Read internal/config/config.go for more details.
 
 2. **Run the crawler**:
     ```sh
-    gamedb crawl -p fitgirl -a
+    go run . crawl -p fitgirl -a
     ```
 
 3. **Start the server**:
     ```sh
-    gamedb server -a :8080
+    go run . server -a :8080
     ```
 
 4. **Access the API**:
