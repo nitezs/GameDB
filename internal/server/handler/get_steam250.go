@@ -28,11 +28,11 @@ func GetSteam250(c *gin.Context) {
 	switch rankingType {
 	case "top":
 		f = crawler.GetSteam250Top250Cache
-	case "week":
+	case "week-top":
 		f = crawler.GetSteam250WeekTop50Cache
-	case "best":
+	case "best-of-the-year":
 		f = crawler.GetSteam250BestOfTheYearCache
-	case "most":
+	case "most-played":
 		f = crawler.GetSteam250MostPlayedCache
 	default:
 		c.JSON(http.StatusBadRequest, GetSteam250Response{

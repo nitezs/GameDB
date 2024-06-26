@@ -73,6 +73,14 @@ Read `internal/config/config.go` for more details.
 4. **Access the API**:
     You can now access the API at `http://localhost:8080`.
 
+## Routes
+
+- GET /raw/:id - Get raw game data
+- GET /game/search - Search for game infos 
+- GET /game/:id - Get game info
+- GET /game/name/:name - Get game info by name
+- GET /ranking/:type - Get game ranking, type can be top, week-top, best-of-the-year, most-played
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0 License.
